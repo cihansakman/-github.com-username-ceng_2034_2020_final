@@ -1,0 +1,123 @@
+\documentclass[onecolumn]{article}
+%\usepackage{url}
+%\usepackage{algorithmic}
+\usepackage[a4paper]{geometry}
+\usepackage{datetime}
+\usepackage[margin=2em, font=small,labelfont=it]{caption}
+\usepackage{graphicx}
+\usepackage{mathpazo} % use palatino
+\usepackage[scaled]{helvet} % helvetica
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{graphicx} %package to manage images
+\graphicspath{ {images/} }
+% Letterspacing macros
+\newcommand{\spacecaps}[1]{\textls[200]{\MakeUppercase{#1}}}
+\newcommand{\spacesc}[1]{\textls[50]{\textsc{\MakeLowercase{#1}}}}
+
+\title{\spacecaps{Assignment Report 2: Child Process and Multiprocessing}\\ \normalsize \spacesc{CENG2034, Operating Systems} }
+
+\author{Mehmet Cihan Sakman\\mehmetcihansakman@posta.mu.edu.tr\\github: \textbf{https://github.com/ctyp55}}
+%\date{\today\\\currenttime}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+The purpose of this project is that learn how to create a child process and using multiprocessing in Python language. During this project, I used Python's \textbf{os}, \textbf{uuid}, \textbf{requests}, \textbf{hashlib} and \textbf{multiprocessing} libraries to achieve my goal. At the begging of the project, I created a child process with the \textbf{os} library. After that, I experienced that we have a problem with waiting child process and I solved this problem during this project. In the multiprocessing part, I try to do what I want with using more than one CPU in my computer.
+\end{abstract}
+
+\section{Introduction}
+The main purpose of this project is that understand how child processes are creating, how can we use our child process in harmony with parent process and what are the benefits of using multiprocessing. 
+
+\section{Assignments}
+Following subsections explains how different tasks solved step by step.
+
+\subsection{Child Process and it's PID}
+
+Using \textbf{os.fork()} command we can create two processes parent process and child process. \textbf{os.fork()} command returning a value to us. If this value equal to zero it means that it's a child process, if it is bigger than zero it means that it's a parent process. And with \textbf{os.getpid()} command we get the process ID of both parent and child process to see whether they are using the same memory area or not.
+
+\begin{figure}[h]
+\includegraphics[scale=0.6]{foto1.png}
+\centering
+\end{figure}
+
+\subsection{Downloading the files with child process}
+Within the child process, we download our files via given URLs. While this process we use a function which is given to us named \emph{download-file}. This download-file function takes two parameters: the first one for the \underline{file's URL} and the second one for the \underline{name of the file after download}.\newline
+
+\begin{figure}[h]
+\includegraphics[scale=0.5]{foto2.png}
+\centering
+\end{figure}
+
+\subsection{Handle orphan process situation}
+The child process and parent process are working \textbf{simultaneously}. Therefore there is a problem which we faced at this stage called \textbf{'orphan process'}. It means if our parent process end before child process after that stage child process become an orphan process and it continues to work out of our control. To avoid this situation we use \textbf{os.wait()} command to waiting child process to finish it works. Also, we use \textbf{os.-exit(0)} to ensure that the child process ends successfully.\newline
+
+
+\begin{figure}[h]
+\includegraphics[scale=0.45]{foto3.png}
+\centering
+\end{figure}
+
+\subsection{Multiprocessing}
+At this stage of the project, we have five different png files to check whether they are duplicate or not. To check that, I created a function named \textbf{duplicate-test} and we use multiprocessing to handle these png files I send them to \textbf{duplicate-test} as a different process. First of all we use \textbf{Pool} from \textbf{multiprocessing} library. As you can see below it takes an argument which determines how many CPUs will you use. At this point I used\textbf{os.cpu-count()} to use my all CPU. After that using \textbf{map()} function from \textbf{Pool}, we just give our function and parameter as an array(\emph{map() function will take members of this array one by one}).
+
+
+\begin{figure}[h]
+\includegraphics[scale=0.5]{foto4.png}
+\centering
+\end{figure}
+
+
+\section{Results}
+We will handle results step by step.
+
+\subsection{Child and Parent Process' ID}
+
+
+\begin{figure}[h]
+\includegraphics[scale=0.9]{foto5.png}
+\centering
+\end{figure}
+As a result of \textbf{Assignment 2.1} we can see that Parent PID and Child PID are different. Therefore we can assume that they are using different memory areas.\newline
+
+\subsection{Multiprocessing}
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        \centering
+        \includegraphics[width=1.0\textwidth]{normal.png} % first figure itself
+        \caption{Normal Time}
+    \end{minipage}\hfill
+    \begin{minipage}{0.5\textwidth}
+        \centering
+        \includegraphics[width=1.1\textwidth]{multip.png} % second figure itself
+        \caption{Multiprocessing Time}
+    \end{minipage}
+    \bigbreak
+    When we run our code with Multiprocessing it takes 2.56 seconds and it takes 2.69 seconds without multiprocessing. As you can see there is no big difference between Multiprocessing and Normal processing for this project.
+\end{figure}
+
+ \includegraphics[scale=0.90]{foto6.png}\newline\newline As we can see above, when we use multiprocessing each CPU act like different processes. Due to this system has 2 CPU there is two different processes ID when the multiprocessing called.
+
+
+\subsection{Duplication}
+
+\begin{figure}[h]
+\includegraphics[scale=0.9]{sonfoto.png}
+\centering
+\end{figure}
+
+As a final result of this project, we can see that there is only one non-duplicate photo among five URLs.
+
+\section{Conclusion}
+\setlength{\parskip}{1em}As a result, the purpose of having this project is to show that whether more than time-saving for parents and child it showed a use that after child and parent processes use the same memory area since the child process is a separate process while downloading, it performs this operation in its own memory space. Normally we can use child process and parent process as parallel processing. But in this project we can not use the parent process at the same time to identify whether our URLs' content duplicate or not. Because in \textbf{Assignment 2.3} there was a problem as an orphan process. Therefore we need to wait for our child process to complete its process. And we solved this problem with \textbf{os.wait()} function. Due to identify duplicate URLs' we need the have these pictures as downloaded. And the other problem is that if parent process finish it work's before child process our program ends and child process continues to run out of our control. We avoided this problem as we discuss in \textbf{Assignment 2.3}. We are just waiting for the child process to finish its work.
+
+The other point in this project aims to show us that using multiprocessing for saving time. Because of our finding duplicate URLs' process is not so complicated, unfortunately, we couldn't see this time-saving clearly in this project. But in normal, multiprocessing much faster than without multiprocessing. In multiprocessing due to the work as different processes, each CPU uses its own memory area therefore there may be some problems with using arrays operation. For example, if you want to append or delete something from your array and if you want to do these operations with multiprocessing you may face some problems. Because each process has their own arrays. They can not delete or append at the same time. We should be careful about such kind of problems.
+\end{document}
+
+
+
+
+
